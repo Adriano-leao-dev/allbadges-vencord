@@ -60,7 +60,7 @@ Se um ícone parar de carregar, abra uma issue com a categoria, o nome da varian
 
 ## Autor e créditos
 
-<a href="https://github.com/Adriano-leao-dev"><img src="https://avatars.githubusercontent.com/u/176540845?s=80" width="48" height="48" alt="Foto de B4_Lord"></a>
+<a href="https://github.com/Adriano-leao-dev"><img src="docs/author.jpg" width="48" height="48" alt="Foto de B4_Lord"></a>
 
 **B4_Lord** mantém o AllBadges Vencord. [Perfil no GitHub](https://github.com/Adriano-leao-dev)
 
