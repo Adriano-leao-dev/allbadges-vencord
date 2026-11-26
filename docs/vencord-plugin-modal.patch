@@ -1,0 +1,74 @@
+diff --git a/src/components/settings/tabs/plugins/PluginModal.tsx b/src/components/settings/tabs/plugins/PluginModal.tsx
+index 7c5ad185..acd91e62 100644
+--- a/src/components/settings/tabs/plugins/PluginModal.tsx
++++ b/src/components/settings/tabs/plugins/PluginModal.tsx
+@@ -47,12 +47,17 @@ const cl = classNameFactory("vc-plugin-modal-");
+ const AvatarStyles = findCssClassesLazy("moreUsers", "avatar", "clickableAvatar");
+ const UserRecord: Constructor<Partial<User>> = proxyLazy(() => UserStore.getCurrentUser().constructor) as any;
+ 
++interface UserPluginModalMetadata {
++    pluginModalLinks?: { website: string; source: string; };
++    pluginModalAuthorAvatars?: Record<string, string>;
++}
++
+ interface PluginModalProps extends RenderModalProps {
+-    plugin: Plugin;
++    plugin: Plugin & UserPluginModalMetadata;
+     onRestartNeeded(key: string): void;
+ }
+ 
+-function makeDummyUser(user: { username: string; id?: string; avatar?: string; }) {
++function makeDummyUser(user: { username: string; id?: string; avatar?: string; avatarURL?: string; }) {
+     const newUser = new UserRecord({
+         username: user.username,
+         id: user.id ?? generateId(),
+@@ -61,6 +66,12 @@ function makeDummyUser(user: { username: string; id?: string; avatar?: string; }
+         bot: true,
+     });
+ 
++    if (user.avatarURL) {
++        const { avatarURL } = user;
++        Object.defineProperty(newUser, "getAvatarURL", { value: () => avatarURL });
++        return newUser;
++    }
++
+     FluxDispatcher.dispatch({
+         type: "USER_UPDATE",
+         user: newUser,
+@@ -91,10 +102,11 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
+         (async () => {
+             for (const user of plugin.authors.slice(0, 6)) {
+                 try {
++                    const avatarURL = plugin.pluginModalAuthorAvatars?.[user.name];
+                     const author = user.id
+                         ? await UserUtils.getUser(String(user.id))
+-                            .catch(() => makeDummyUser({ username: user.name }))
+-                        : makeDummyUser({ username: user.name });
++                            .catch(() => makeDummyUser({ username: user.name, avatarURL }))
++                        : makeDummyUser({ username: user.name, avatarURL });
+ 
+                     setAuthors(a => [...a, author]);
+                 } catch (e) {
+@@ -175,7 +187,7 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
+             title={
+                 <div className={cl("header")}>
+                     <Heading tag="h3">{plugin.name}</Heading>
+-                    {!pluginMeta.userPlugin && (
++                    {(!pluginMeta.userPlugin || plugin.pluginModalLinks) && (
+                         <div className="vc-settings-modal-links">
+                             <FavoriteButton
+                                 isFavorite={pluginSettings.isFavorite ?? false}
+@@ -183,11 +195,11 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
+                             />
+                             <WebsiteButton
+                                 text="View more info"
+-                                href={`https://vencord.dev/plugins/${plugin.name}`}
++                                href={plugin.pluginModalLinks?.website ?? `https://vencord.dev/plugins/${plugin.name}`}
+                             />
+                             <GithubButton
+                                 text="View source code"
+-                                href={`https://github.com/${gitRemote}/tree/main/src/plugins/${pluginMeta.folderName}`}
++                                href={plugin.pluginModalLinks?.source ?? `https://github.com/${gitRemote}/tree/main/src/plugins/${pluginMeta.folderName}`}
+                             />
+                         </div>
+                     )}

@@ -39,6 +39,10 @@ Você precisa de uma cópia do código-fonte do **Vencord**, com Node.js e pnpm 
 
 4. Reinicie o Discord e ative **AllBadgesVencord** em **Configurações → Vencord → Plugins**. Se tiver o **AllProfileBadges** antigo, deixe-o desligado. Se estiver migrando do **B4LordBadges**, retire a pasta antiga antes de compilar. O plugin aproveita a configuração salva da versão anterior.
 
+### Foto em Authors e atalhos no topo
+
+O cartão do plugin inclui a foto e os links. Para também mostrar a foto na área **Authors** e na janela de autoria, além dos ícones de favorito, informações e código-fonte no cabeçalho, aplique o [patch opcional do Vencord](docs/vencord-plugin-modal.patch) antes de compilar. Na raiz do código-fonte do Vencord, use `git apply <caminho-do-arquivo.patch>`. O patch foi conferido com a revisão `ce9355e9` do Vencord e pode precisar de ajuste se o modal mudar.
+
 ## Como usar
 
 1. Abra a engrenagem do **AllBadgesVencord**.
